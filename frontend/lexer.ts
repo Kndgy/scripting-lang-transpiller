@@ -2,19 +2,28 @@
 // let [ letToken, IdentifierTK, EqualsToken, NumberToken ]
 
 export enum TokenType {
+  // Literal Types
   Number,
   Identifier,
+
+  // Keywords
+  Let,
+
+  // Grouping * Operators
   Equals,
   OpenParen,
   CloseParen,
   BinaryOperator,
-  Let,
+  EOF, //siginified the end of file
 }
 
+// represents a single token from the source code
 export interface Token {
-  value: string,
-  type: TokenType,
+  value: string, // raw value
+  type: TokenType, // tagged structure
 }
+
+// Constant Lookup for keywords and identifiers + symbols.
 
 const KEYWORDS: Record<string, TokenType> = {
   "let" :TokenType.Let,
@@ -83,6 +92,7 @@ export function tokenize (sourceCode: string): Token[] {
     }
   }
 
+  tokens.push({type: TokenType.EOF, value: "EndOfFile"});
   return tokens;
 }
 
