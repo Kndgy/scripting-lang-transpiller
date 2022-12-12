@@ -3,6 +3,7 @@
 
 export enum TokenType {
   // Literal Types
+  Null,
   Number,
   Identifier,
 
@@ -26,7 +27,8 @@ export interface Token {
 // Constant Lookup for keywords and identifiers + symbols.
 
 const KEYWORDS: Record<string, TokenType> = {
-  "let" :TokenType.Let,
+  let :TokenType.Let,
+  null : TokenType.Null,
 }
 
 function token (value = "", type: TokenType): Token{
@@ -60,7 +62,7 @@ export function tokenize (sourceCode: string): Token[] {
     } else if(src[0] == "="){
       tokens.push(token(src.shift(), TokenType.Equals));
     } else {
-      //handle multichar tokens
+      //handle numeric literals -> integer
       if(isInt(src[0])) {
         let num = "";
         while (src.length > 0 && isInt(src[0])){
@@ -78,15 +80,15 @@ export function tokenize (sourceCode: string): Token[] {
         //check for reserved keywords
         const reserved = KEYWORDS[ident];
 
-        if(reserved == undefined) {
-          tokens.push(token(ident, TokenType.Identifier));
-        } else {
+        if(typeof reserved == "number") {
           tokens.push(token(ident, reserved));
+        } else {
+          tokens.push(token(ident, TokenType.Identifier));
         }
       } else if(isSkippable(src[0])) {
         src.shift();
       } else {
-        console.log("unrecognized characters found in source: ", src[0])
+        console.log("unrecognized characters found in source: ", src[0].charCodeAt, src[0])
         Deno.exit(1)
       }
     }
