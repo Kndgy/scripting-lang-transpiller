@@ -1,4 +1,4 @@
-import { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from "./ast.ts";
+import { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral } from "./ast.ts";
 import { tokenize, Token, TokenType } from "./lexer.ts";
 
 export default class Parser {
@@ -105,17 +105,27 @@ export default class Parser {
       case TokenType.Identifier:
         return { 
           kind: "Identifier", 
-          symbol: this.eat().value } as Identifier;
+          symbol: this.eat().value 
+        } as Identifier;
+
+      case TokenType.Null:
+        this.eat(); //advance past null keyword
+        return {kind: "NullLiteral", value: "null"} as NullLiteral;
+
+        // constants and Numeric Const
       case TokenType.Number:
         return { 
           kind: "NumericLiteral", 
           value: parseFloat(this.eat().value) } as NumericLiteral;
+
+        //Grouping expressions
       case TokenType.OpenParen:{
         this.eat();
         const value = this.parse_expr();
         this.expect(TokenType.CloseParen, "Unexpected token found inside parenthesised expression. Expecting closing parenthesis.",);
         return value;
       }
+
       default: 
         console.error("Unexpected token found during parsing", this.at())
         Deno.exit(1)
