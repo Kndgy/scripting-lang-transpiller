@@ -3,9 +3,9 @@
 
 export enum TokenType {
   // Literal Types
-  Null,
   Number,
   Identifier,
+  // StringLiteral
 
   // Keywords
   Let,
@@ -28,7 +28,6 @@ export interface Token {
 
 const KEYWORDS: Record<string, TokenType> = {
   let :TokenType.Let,
-  null : TokenType.Null,
 }
 
 function token (value = "", type: TokenType): Token{
