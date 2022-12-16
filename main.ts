@@ -1,3 +1,4 @@
+import { tokenize } from "./frontend/lexer.ts";
 import Parser from "./frontend/parser.ts";
 import { evaluate } from "./runtime/interpreter.ts";
 
@@ -16,6 +17,10 @@ function repl () {
     const program = parser.produceAST(input);
 
     const result = evaluate(program);
-    console.log(result);
+    for (const token of tokenize(input)) {
+        console.log(token)
+    }
+    // console.log()
+    console.log("\n",result);
   }
 }

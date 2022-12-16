@@ -1,0 +1,85 @@
+{
+  "UmgParentName": [
+    {
+      "parent":[
+        {
+          "class": "string || /Script/UMG.SizeBox",
+          "name": "SizeBox_JS",
+          "DisplayLabel" : "SizeBox_JS",
+          "objectSlot" : [
+            {
+              "class" : "/Script/UMG.SizeBoxSlot",
+              "name":"SizeBoxSlot_0",
+              "parent":["SizeBox", "name : SizeBox_JS"],
+              "content":["TextBlock", "name : TextBlock_JS"]
+            }
+          ],
+          "Slots[0]" : [
+            {
+              "SizeBoxSlot" : "SizeBoxSlot_0"
+            }
+          ],
+          "boolExpandedInDesigner" : true
+        }
+      ],
+      "slot":[
+        {
+          "class": "/Script/UMGEditor.WidgetSlotPair",
+          "name": "WidgetSlotPair_1",
+          "widgetName":"SizeBox_JS",
+          "SlotPropertyNames": {
+            "LayoutData" : [
+              {
+                "offsets": [
+                  {
+                    "left" :0.000000,
+                    "top" :0.000000,
+                    "right":100.000000,
+                    "bottom":30.000000
+                  }
+                ],
+                "anchors":[
+                  {
+                    "minimum":[
+                      {
+                        "x":0.000000,
+                        "y":0.000000
+                      }
+                    ],
+                    "maximum":[
+                      {
+                        "x":0.000000,
+                        "y":0.000000
+                      }
+                    ]
+                  }
+                ],
+                "alignment":[
+                  {
+                    "x":0.000000,
+                    "y":0.000000
+                  }
+                ]
+              }
+            ],
+            "boolAutoSize" : false,
+            "Zorder" : 0 
+          }
+        }
+      ],
+      "ContentSlot":[
+        {
+          "class": "string || /Script/UMG.TextBlock",
+          "name": "TextBlock_JS",
+          "NSLOCTEXT":[
+            "[7111009045A9112BCD784783480A37A2]",
+            "6442577D4B8A7F0E37DA728885BC22A4",
+            "Content text"
+          ],
+          "DisplayLabel":"TextBlock_JS",
+          "widgetName":""
+        }
+      ]
+    }
+  ]
+}

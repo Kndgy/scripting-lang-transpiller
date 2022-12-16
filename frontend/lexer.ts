@@ -88,7 +88,7 @@ export function tokenize (sourceCode: string): Token[] {
       } else if(isSkippable(src[0])) {
         src.shift();
       } else {
-        console.log("unrecognized characters found in source: ", src[0].charCodeAt, src[0])
+        console.log("unrecognized characters found in source: ", src[0].charCodeAt(0), src[0])
         Deno.exit(1)
       }
     }
@@ -98,7 +98,7 @@ export function tokenize (sourceCode: string): Token[] {
   return tokens;
 }
 
-const source = await Deno.readTextFile("./test.txt");
-for (const token of tokenize(source)) {
-  console.log(token)
-}
+// const source = await Deno.readTextFile("./test.txt");
+// for (const token of tokenize(source)) {
+//   console.log(token)
+// }
