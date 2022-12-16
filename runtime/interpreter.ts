@@ -1,5 +1,6 @@
-import { RuntimeVal, NumberVal, NullVal } from './values.ts'
-import { BinaryExpr, NumericLiteral, Program, Statement } from '../frontend/ast.ts'
+import { RuntimeVal, NumberVal, MK_NULL } from './values.ts'
+import { BinaryExpr, Identifier, NumericLiteral, Program, Statement } from '../frontend/ast.ts'
+import Environment from './environment.ts';
 
 function eval_numeric_binary_expr(leftHandSide: NumberVal, rightHandSide: NumberVal, operator: string): NumberVal{
   let result: number;
@@ -18,11 +19,11 @@ function eval_numeric_binary_expr(leftHandSide: NumberVal, rightHandSide: Number
   return {value: result, type: "number"};
 }
 
-function eval_program(program: Program): RuntimeVal {
-  let lastEvaluated: RuntimeVal = {type:"null", value:"null"} as NullVal;
+function eval_program(program: Program, env: Environment): RuntimeVal {
+  let lastEvaluated: RuntimeVal = MK_NULL();
 
   for (const statement of program.body){
-    lastEvaluated = evaluate(statement);
+    lastEvaluated = evaluate(statement, env);
   }
 
   return lastEvaluated;
@@ -30,9 +31,9 @@ function eval_program(program: Program): RuntimeVal {
 }
 
 //recursively evaluate left and right side
-function eval_binary_expr(binop: BinaryExpr): RuntimeVal {
-  const leftHandSide = evaluate(binop.left);
-  const rightHandSide = evaluate(binop.right);
+function eval_binary_expr(binop: BinaryExpr, env: Environment): RuntimeVal {
+  const leftHandSide = evaluate(binop.left, env);
+  const rightHandSide = evaluate(binop.right, env);
 
   // TODO handle if one string one number etc
   if(leftHandSide.type == "number" && rightHandSide.type == "number" ){
@@ -43,13 +44,18 @@ function eval_binary_expr(binop: BinaryExpr): RuntimeVal {
     );
   }
   //one or both are Null
-  return {type: "null", value: "null" } as NullVal;
+  return MK_NULL();
+}
+
+function eval_identifier(ident: Identifier, env: Environment): RuntimeVal {
+  const val = env.lookupVar(ident.symbol);
+  return val;
 }
 
 // evaluate ast Node by iterating through all of its children 
 // and returning last evaluated elements, 
 // if there no element in program, it'll return null value 
-export function evaluate(astNode: Statement): RuntimeVal {
+export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
   
   switch(astNode.kind){
     case "NumericLiteral":
@@ -57,15 +63,12 @@ export function evaluate(astNode: Statement): RuntimeVal {
         value: ((astNode as NumericLiteral).value),
         type: "number"
       } as NumberVal;
-    case "NullLiteral":
-        return {
-          value: "null",
-          type: "null"
-        } as NullVal;
+    case "Identifier":
+      return eval_identifier(astNode as Identifier, env);
     case "BinaryExpr":
-      return eval_binary_expr(astNode as BinaryExpr);
+      return eval_binary_expr(astNode as BinaryExpr, env);
     case "Program":
-      return eval_program(astNode as Program);
+      return eval_program(astNode as Program, env);
 
       default:
         console.error("AST Node has yet to be setup for interpretation", astNode);
