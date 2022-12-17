@@ -9,11 +9,15 @@ repl()
 function repl () {
   const parser = new Parser();
   const env = new Environment();
+
+  // create default global environment
   env.declareVar("x", MK_NUMBER(100))
   env.declareVar("true", MK_BOOL(true));
   env.declareVar("false", MK_BOOL(false));
   env.declareVar("null", MK_NULL());
+  
   console.log("\nRepl v0.1");
+
   while (true) {
     const input = prompt ("> ");
     //check for no user input or exit keyword.
@@ -23,11 +27,12 @@ function repl () {
 
     const program = parser.produceAST(input);
 
+    // for (const token of tokenize(input)) {
+    //   console.log("token: ", token)
+    // }
+    // console.log("ast : ", program)
+
     const result = evaluate(program, env);
-    for (const token of tokenize(input)) {
-        console.log("token: ", token)
-    }
-    // console.log()
     console.log("\n",result);
   }
 }
