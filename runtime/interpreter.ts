@@ -1,56 +1,8 @@
-import { RuntimeVal, NumberVal, MK_NULL } from './values.ts'
-import { BinaryExpr, Identifier, NumericLiteral, Program, Statement } from '../frontend/ast.ts'
+import { RuntimeVal, NumberVal} from './values.ts'
+import { BinaryExpr, Identifier, NumericLiteral, Program, Statement, VarDeclaration } from '../frontend/ast.ts'
 import Environment from './environment.ts';
-
-function eval_numeric_binary_expr(leftHandSide: NumberVal, rightHandSide: NumberVal, operator: string): NumberVal{
-  let result: number;
-  if (operator == "+") {
-    result = leftHandSide.value + rightHandSide.value;
-  } else if (operator == "-") {
-    result = leftHandSide.value - rightHandSide.value;
-  } else if (operator == "*") {
-    result = leftHandSide.value * rightHandSide.value;
-  } else if(operator == "/") {
-    // TODO: division by zero checks
-    result = leftHandSide.value / rightHandSide.value;
-  } else {
-    result = leftHandSide.value % rightHandSide.value;
-  }
-  return {value: result, type: "number"};
-}
-
-function eval_program(program: Program, env: Environment): RuntimeVal {
-  let lastEvaluated: RuntimeVal = MK_NULL();
-
-  for (const statement of program.body){
-    lastEvaluated = evaluate(statement, env);
-  }
-
-  return lastEvaluated;
-
-}
-
-//recursively evaluate left and right side
-function eval_binary_expr(binop: BinaryExpr, env: Environment): RuntimeVal {
-  const leftHandSide = evaluate(binop.left, env);
-  const rightHandSide = evaluate(binop.right, env);
-
-  // TODO handle if one string one number etc
-  if(leftHandSide.type == "number" && rightHandSide.type == "number" ){
-    return eval_numeric_binary_expr(
-      leftHandSide as NumberVal, 
-      rightHandSide as NumberVal, 
-      binop.operator
-    );
-  }
-  //one or both are Null
-  return MK_NULL();
-}
-
-function eval_identifier(ident: Identifier, env: Environment): RuntimeVal {
-  const val = env.lookupVar(ident.symbol);
-  return val;
-}
+import { eval_identifier,eval_binary_expr } from "./eval/expressions.ts";
+import { eval_program,eval_var_declaration } from "./eval/statements.ts";
 
 // evaluate ast Node by iterating through all of its children 
 // and returning last evaluated elements, 
@@ -70,6 +22,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeVal {
     case "Program":
       return eval_program(astNode as Program, env);
 
+      //handle statements
+      case "VarDeclaration":
+        return eval_var_declaration (astNode as VarDeclaration, env);
       default:
         console.error("AST Node has yet to be setup for interpretation", astNode);
         Deno.exit(1);

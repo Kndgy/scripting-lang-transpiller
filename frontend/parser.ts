@@ -1,4 +1,4 @@
-import { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from "./ast.ts";
+import { Statement, Program, Expr, BinaryExpr, NumericLiteral, Identifier, VarDeclaration } from "./ast.ts";
 import { tokenize, Token, TokenType } from "./lexer.ts";
 
 export default class Parser {
@@ -7,11 +7,14 @@ export default class Parser {
   private not_eof (): boolean {
     return this.tokens[0].type != TokenType.EOF;
   }
-
-  private at () {
+    /**
+    * Returns the currently available token
+    */
+  private at (): Token {
     return this.tokens[0] as Token
   }
 
+  //test
   private eat () {
     const prev = this.tokens.shift() as Token;
     return prev;
@@ -44,7 +47,53 @@ export default class Parser {
 
   private parse_statement(): Statement {
     // skip to parse_expr
-    return this.parse_expr();
+    switch (this.at().type) {
+      case TokenType.Let:
+      case TokenType.Const:
+        return this.parse_var_declaration();
+      default:
+        return this.parse_expr()
+    }
+  } 
+
+  // let ident
+  //(const | let) IDENT
+  parse_var_declaration(): Statement {
+    const isConstant =  this.eat().type == TokenType.Const;
+    const identifier = this.expect(
+      TokenType.Identifier, "Expected identifier name following let | const keywords"
+    ).value;
+
+    if(this.at().type == TokenType.Semicolon) {
+      this.eat() // expect semicolon
+      if (isConstant) {
+        throw "must assign value to constant expression. No value provided.";
+      }
+      return {
+        kind: "VarDeclaration", 
+        identifier, 
+        constant: false
+      } as VarDeclaration;
+    }
+
+    this.expect(
+      TokenType.Equals, 
+      "Expected equals token following identifier in var declaration"
+    )
+    
+    const declaration = {
+      kind: "VarDeclaration",
+      value: this.parse_expr(),
+      identifier,
+      constant: isConstant
+    } as VarDeclaration;
+
+    this.expect(
+      TokenType.Semicolon, 
+      "variable declaration statemnt must end with semicolon."
+    )
+
+    return declaration; 
   } 
 
   private parse_expr(): Expr {
@@ -112,7 +161,7 @@ export default class Parser {
       case TokenType.Number:
         return { 
           kind: "NumericLiteral", 
-          value: parseFloat(this.eat().value) } as NumericLiteral;
+          value: parseFloat(this.eat().value + "\n") } as NumericLiteral;
 
         //Grouping expressions
       case TokenType.OpenParen:{
