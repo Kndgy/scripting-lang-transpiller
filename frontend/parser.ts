@@ -123,7 +123,7 @@ export default class Parser {
 
       while (this.not_eof() && this.at().type != TokenType.CloseBrace) {
         // {"key: val, key2: val"}
-        const key = this.expect(TokenType.Identifier, "Object ltieral key expected").value;
+        const key = this.expect(TokenType.Identifier, "Object literal key expected").value;
 
         // allows shorthand key: pair -> {key}
         if(this.at().type == TokenType.Comma) {
