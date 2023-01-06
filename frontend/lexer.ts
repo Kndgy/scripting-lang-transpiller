@@ -52,6 +52,7 @@ function isInt(str: string) {
 }
 
 export function tokenize (sourceCode: string): Token[] {
+  // console.log("source code:", sourceCode)
   const tokens = new Array<Token>();
   const src = sourceCode.split("");
 
@@ -113,6 +114,7 @@ export function tokenize (sourceCode: string): Token[] {
   }
 
   tokens.push({type: TokenType.EOF, value: "EndOfFile"});
+  // console.log("from lexer: ", tokens)
   return tokens;
 }
 
