@@ -22,16 +22,17 @@ export default class Parser {
 
   private expect (type: TokenType, err: any) {
     const prev = this.tokens.shift() as Token;
-    if(!prev || prev.type != type){
-      console.error("Parser Error:\n", err, prev, "- Expecting: ", type);
-      Deno.exit(1)
-    }
+    // if(!prev || prev.type != type){
+    //   console.error("Parser Error:\n", err, prev, "- Expecting: ", type);
+    //   Deno.exit(1)
+    // }
 
     return prev
   }
 
   public produceAST(sourccode: string): Program {
     this.tokens = tokenize(sourccode);
+    console.log("from parser :", this.tokens)
     const program: Program = {
       kind:"Program",
       body: [],

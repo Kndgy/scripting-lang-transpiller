@@ -4,9 +4,9 @@ const obj = {
   x: 100,
   y: 32,
   foo: foo,
-  complex: {
+  const complex = (
     bar: true
-  },
+  )
 };
 
 foo = obj.foo(bar(x,y)) + 5

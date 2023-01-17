@@ -11,9 +11,9 @@ async function run(filename: string){
 
   const input = await Deno.readTextFile(filename);
   const program = parser.produceAST(input);
-  console.log(program)
-  const result = evaluate(program, env);
-  console.log(result)
+  console.log("program: ",program)
+  // const result = evaluate(program, env);
+  // console.log(result)
 }
 
 function repl () {
